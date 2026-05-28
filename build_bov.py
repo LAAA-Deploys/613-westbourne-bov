@@ -18,6 +18,7 @@ HTML = r"""<!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>613 Westbourne Drive | Broker Opinion of Value | LAAA Team</title>
 <meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="images/logo-blue.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -524,6 +525,30 @@ HTML = r"""<!DOCTYPE html>
         info.open(subjectMap, mk);
       });
     });
+
+    // Offscreen-init guard: Google Maps can paint gray until the container
+    // gets a resize once it scrolls into view. Trigger resize + recenter on reveal.
+    setupResizeGuard(resumeMap, document.getElementById('resumeMap'), function(){
+      var b=new google.maps.LatLngBounds();
+      resumeMarkers.forEach(function(mk){ if(mk.getVisible()) b.extend(mk.getPosition()); });
+      if(!b.isEmpty()){ resumeMap.fitBounds(b); } else { resumeMap.setCenter({lat:34.05,lng:-118.41}); }
+    });
+    setupResizeGuard(subjectMap, document.getElementById('subjectMap'), function(){
+      subjectMap.setCenter({lat:SUBJECT.lat,lng:SUBJECT.lng});
+    });
+  }
+
+  function setupResizeGuard(map, el, recenter){
+    var done=false;
+    function fix(){ if(done) return; done=true; google.maps.event.trigger(map,'resize'); recenter(); }
+    if('IntersectionObserver' in window){
+      var io=new IntersectionObserver(function(ents){
+        ents.forEach(function(e){ if(e.isIntersecting){ fix(); io.disconnect(); } });
+      }, {threshold:0.1});
+      io.observe(el);
+    } else {
+      window.addEventListener('load', fix);
+    }
   }
 
   function buildControls(){
@@ -550,7 +575,7 @@ HTML = r"""<!DOCTYPE html>
   }
   window.initMaps = initMaps;
 </script>
-<script async defer src="https://maps.googleapis.com/maps/api/js?key=__MAPS_KEY__&callback=initMaps"></script>
+<script async src="https://maps.googleapis.com/maps/api/js?key=__MAPS_KEY__&callback=initMaps&loading=async"></script>
 </body>
 </html>"""
 
