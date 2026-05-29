@@ -291,6 +291,9 @@ sm_b, sm_u = cnt["Santa Monica"], un["Santa Monica"]
 wla_b, wla_u = cnt["Westwood / Brentwood / West LA"], un["Westwood / Brentwood / West LA"]
 al_b = weho_b + corr_b + bh_b + sm_b
 al_u = weho_u + corr_u + bh_u + sm_u
+# Combined prime-Westside total across all five submarkets (lead with this, not the WeHo breakout)
+prime_b = weho_b + corr_b + bh_b + sm_b + wla_b
+prime_u = weho_u + corr_u + bh_u + sm_u + wla_u
 
 # ===========================================================================
 # HTML
@@ -598,15 +601,13 @@ HTML = r"""<!DOCTYPE html>
       <div class="s"><div class="n">10</div><div class="l">Team members behind your listing</div></div>
     </div>
 
-    <h3 style="font-size:22px;margin-top:48px">Concentration: the A-level Westside</h3>
-    <p style="max-width:820px;margin-top:8px">The team's closed transactions are concentrated in the prime, supply-constrained Westside cities most relevant to 613 Westbourne. The following is a snapshot of closings in these submarkets.</p>
+    <h3 style="font-size:22px;margin-top:48px">Concentration: the prime Westside</h3>
+    <p style="max-width:820px;margin-top:8px">The team's work is concentrated in the prime, supply-constrained Westside cities most relevant to 613 Westbourne, West Hollywood, the Fairfax&ndash;Melrose corridor, Beverly Hills, Santa Monica, and the wider West LA / Brentwood / Westwood market. Across these submarkets the team has closed:</p>
     <div class="resume-cards">
-      <div class="rc"><div class="city">West Hollywood</div><div class="big">__WEHO_B__</div><div class="det">buildings &middot; __WEHO_U__ units</div></div>
-      <div class="rc"><div class="city">WeHo / Fairfax&ndash;Melrose Corridor</div><div class="big">__CORR_B__</div><div class="det">buildings &middot; __CORR_U__ units</div></div>
-      <div class="rc"><div class="city">Beverly Hills</div><div class="big">__BH_B__</div><div class="det">buildings &middot; __BH_U__ units</div></div>
-      <div class="rc"><div class="city">Santa Monica</div><div class="big">__SM_B__</div><div class="det">buildings &middot; __SM_U__ units</div></div>
-      <div class="rc"><div class="city">Westwood / Brentwood / West LA</div><div class="big">__WLA_B__</div><div class="det">buildings &middot; __WLA_U__ units</div></div>
-      <div class="rc" style="border-top-color:var(--navy);background:#f4f7fb"><div class="city">A-Level Westside Total</div><div class="big">__AL_B__</div><div class="det">buildings &middot; __AL_U__ units</div></div>
+      <div class="rc" style="grid-column:1/-1;border-top-width:4px;background:#f4f7fb;text-align:center;padding:30px 22px">
+        <div class="big" style="font-size:54px;line-height:1">__PRIME_B__ buildings &middot; __PRIME_U__ units</div>
+        <div class="det" style="font-size:14px;margin-top:8px">Apartment buildings the team has closed across the prime Westside</div>
+      </div>
     </div>
 
     <h3 style="font-size:22px;margin-top:48px">Closings across prime Los Angeles</h3>
@@ -1156,6 +1157,7 @@ repl = {
   "__SM_B__": str(sm_b), "__SM_U__": str(sm_u),
   "__WLA_B__": str(wla_b), "__WLA_U__": str(wla_u),
   "__AL_B__": str(al_b), "__AL_U__": str(al_u),
+  "__PRIME_B__": str(prime_b), "__PRIME_U__": str(prime_u),
   "__SF__": f"{SF:,}", "__YEAR__": str(YEAR),
   "__GRM__": f"{SUB_GRM:.2f}x", "__CAP__": f"{SUB_CAP:.2f}%",
   "__RENT_ROLL__": rr,
