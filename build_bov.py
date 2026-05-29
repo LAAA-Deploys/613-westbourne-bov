@@ -605,14 +605,13 @@ HTML = r"""<!DOCTYPE html>
     <p style="max-width:820px;margin-top:8px">The team's work is concentrated in the prime, supply-constrained Westside cities most relevant to 613 Westbourne, West Hollywood, the Fairfax&ndash;Melrose corridor, Beverly Hills, Santa Monica, and the wider West LA / Brentwood / Westwood market. Across these submarkets the team has closed:</p>
     <div class="resume-cards">
       <div class="rc" style="grid-column:1/-1;border-top-width:4px;background:#f4f7fb;text-align:center;padding:30px 22px">
-        <div class="big" style="font-size:54px;line-height:1">__PRIME_B__ buildings &middot; __PRIME_U__ units</div>
+        <div class="big" style="font-size:54px;line-height:1">__PRIME_B__</div>
         <div class="det" style="font-size:14px;margin-top:8px">Apartment buildings the team has closed across the prime Westside</div>
       </div>
     </div>
 
     <h3 style="font-size:22px;margin-top:48px">Closings across prime Los Angeles</h3>
-    <p style="max-width:820px;margin-top:8px">Each pin is an apartment building the team has closed in these A-level submarkets. The map filters by city; the West Hollywood view shows the proximity of recent LAAA transactions to the subject.</p>
-    <div class="map-controls" id="resumeControls"></div>
+    <p style="max-width:820px;margin-top:8px">Each pin is an apartment building the team has closed across the prime Westside, a single, current body of work in the supply-constrained markets that matter for 613 Westbourne.</p>
     <div id="resumeMap" class="map"></div>
     <div class="maptip">Click any pin for the address, unit count, and year closed.</div>
     <div class="print-map-note">Interactive map of LAAA closings available at 613-westbourne.laaa.com.</div>
@@ -1017,14 +1016,7 @@ HTML = r"""<!DOCTYPE html>
   var SUBJECT = __SUBJECT_JSON__;
   var MARKERS = __MARKERS_JSON__;
   var COMPS = __COMPS_JSON__;
-  var CITY_COLORS = {
-    'West Hollywood':'#C5A258',
-    'WeHo Corridor (Fairfax/Melrose)':'#1B3A5C',
-    'Beverly Hills':'#2e6b8f',
-    'Santa Monica':'#3d8168',
-    'Westwood / Brentwood / West LA':'#7a5ea0'
-  };
-  var resumeMap, subjectMap, compMap, resumeMarkers=[], info;
+  var resumeMap, subjectMap, compMap, info;
 
   function pin(color){
     return {
@@ -1051,12 +1043,10 @@ HTML = r"""<!DOCTYPE html>
     MARKERS.forEach(function(m){
       var mk = new google.maps.Marker({
         position:{lat:m.lat,lng:m.lng}, map:resumeMap,
-        icon: pin(CITY_COLORS[m.city]||'#1B3A5C'), title:m.a, _city:m.city
+        icon: pin('#1B3A5C'), title:m.a
       });
       iw(resumeMap, mk, '<div style="font-family:Inter,sans-serif;padding:2px 4px"><strong style="color:#1B3A5C">'+m.a+'</strong><br><span style="color:#5b6470;font-size:13px">'+m.city+' &middot; '+(m.u||'&ndash;')+' units &middot; closed '+m.y+'</span></div>');
-      resumeMarkers.push(mk);
     });
-    buildControls();
 
     // SUBJECT MAP
     subjectMap = new google.maps.Map(document.getElementById('subjectMap'),{
@@ -1092,7 +1082,7 @@ HTML = r"""<!DOCTYPE html>
 
     setupResizeGuard(resumeMap, document.getElementById('resumeMap'), function(){
       var b=new google.maps.LatLngBounds();
-      resumeMarkers.forEach(function(mk){ if(mk.getVisible()) b.extend(mk.getPosition()); });
+      MARKERS.forEach(function(m){ b.extend({lat:m.lat,lng:m.lng}); });
       if(!b.isEmpty()){ resumeMap.fitBounds(b); } else { resumeMap.setCenter({lat:34.05,lng:-118.41}); }
     });
     setupResizeGuard(subjectMap, document.getElementById('subjectMap'), function(){
@@ -1118,28 +1108,6 @@ HTML = r"""<!DOCTYPE html>
     }
   }
 
-  function buildControls(){
-    var cities = ['All'];
-    MARKERS.forEach(function(m){ if(cities.indexOf(m.city)<0) cities.push(m.city); });
-    var box = document.getElementById('resumeControls');
-    cities.forEach(function(c,i){
-      var b=document.createElement('button');
-      b.textContent = c==='All' ? 'All submarkets' : c;
-      if(i===0) b.className='active';
-      b.onclick=function(){
-        document.querySelectorAll('#resumeControls button').forEach(function(x){x.className='';});
-        b.className='active';
-        var bounds=new google.maps.LatLngBounds();
-        resumeMarkers.forEach(function(mk){
-          var show = (c==='All' || mk._city===c);
-          mk.setVisible(show);
-          if(show) bounds.extend(mk.getPosition());
-        });
-        if(!bounds.isEmpty()) resumeMap.fitBounds(bounds);
-      };
-      box.appendChild(b);
-    });
-  }
   window.initMaps = initMaps;
 </script>
 <script async src="https://maps.googleapis.com/maps/api/js?key=__MAPS_KEY__&callback=initMaps&loading=async"></script>
